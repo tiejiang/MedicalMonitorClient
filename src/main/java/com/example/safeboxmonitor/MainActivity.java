@@ -9,7 +9,7 @@ import android.widget.Button;
 
 import com.example.safeboxmonitor.common.CCPAppManager;
 import com.example.safeboxmonitor.core.ClientUser;
-import com.example.safeboxmonitor.ui.activity.MenuActivity;
+import com.example.safeboxmonitor.ui.activity.RemoteControlCommandActivity;
 import com.example.safeboxmonitor.ui.helper.IMChattingHelper;
 import com.example.safeboxmonitor.ui.helper.SDKCoreHelper;
 import com.yuntongxun.ecsdk.ECError;
@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements IMChattingHelper.
             @Override
             public void onClick(View v) {
                 Intent mIntent = new Intent();
-                mIntent.setClass(MainActivity.this, MenuActivity.class);
+                mIntent.setClass(MainActivity.this, RemoteControlCommandActivity.class);
                 startActivity(mIntent);
 
             }

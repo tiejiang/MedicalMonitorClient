@@ -1,22 +1,19 @@
 package com.example.safeboxmonitor.ui.activity;
 
 import android.app.Activity;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 import android.view.Window;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.safeboxmonitor.R;
+import com.example.safeboxmonitor.ui.drawer.LineGraphicView;
 import com.example.safeboxmonitor.ui.helper.IMChattingHelper;
 import com.yuntongxun.ecsdk.ECError;
 import com.yuntongxun.ecsdk.ECMessage;
 import com.yuntongxun.ecsdk.im.ECTextMessageBody;
 
+import java.util.ArrayList;
 import java.util.List;
 /**
  * Created by Administrator on 2016/12/14.
@@ -24,31 +21,37 @@ import java.util.List;
 
 public class RemoteControlCommandActivity extends Activity implements IMChattingHelper.OnMessageReportCallback{
 
-    private Button mSendButton;
-    private EditText mReceiveEditText, mSendEditText;
+//    private Button mSendButton;
+//    private EditText mReceiveEditText, mSendEditText;
     private final static String sendNO = "20170418";
+    private LineGraphicView tu;
+    private ArrayList<Double> yList;
+    private ArrayList<Double> tempData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.activity_remote_control_command);
 
-        mSendButton = (Button)findViewById(R.id.btn_command_send);
-        mReceiveEditText = (EditText)findViewById(R.id.received_command);
-        mSendEditText = (EditText)findViewById(R.id.send_info);
+        tu = (LineGraphicView) findViewById(R.id.line_graphic);
+//        mSendButton = (Button)findViewById(R.id.btn_command_send);
+//        mReceiveEditText = (EditText)findViewById(R.id.received_command);
+//        mSendEditText = (EditText)findViewById(R.id.send_info);
 
-        mSendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!TextUtils.isEmpty(mSendEditText.getText())){
-                    String text = mSendEditText.getText().toString();
-                    handleSendTextMessage(text);
-                }else {
-                    Toast.makeText(RemoteControlCommandActivity.this, "发送文本为空", Toast.LENGTH_SHORT).show();                }
-            }
-        });
+        tempData = new ArrayList<Double>();
+//        mSendButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (!TextUtils.isEmpty(mSendEditText.getText())){
+//                    String text = mSendEditText.getText().toString();
+//                    handleSendTextMessage(text);
+//                }else {
+//                    Toast.makeText(RemoteControlCommandActivity.this, "发送文本为空", Toast.LENGTH_SHORT).show();                }
+//            }
+//        });
+        testDraw();
     }
 
     @Override
@@ -58,6 +61,56 @@ public class RemoteControlCommandActivity extends Activity implements IMChatting
         Log.d("TIEJIANG", "TIEJIANG-skyee---[RemoteControlCommandActivity]-onResume");// add by tiejiang
     }
 
+    public void testDraw(){
+        yList = new ArrayList<Double>();
+        yList.add((double) 1.0);
+        yList.add(2.0);
+        yList.add(2.0);
+        yList.add(3.0);
+        yList.add(5.0);
+        yList.add(3.0);
+        yList.add(1.0);
+
+        ArrayList<String> xRawDatas = new ArrayList<String>();
+        xRawDatas.add("周一");
+        xRawDatas.add("周二");
+        xRawDatas.add("周三");
+        xRawDatas.add("周四");
+        xRawDatas.add("周五");
+        xRawDatas.add("周六");
+        xRawDatas.add("周日");
+//        xRawDatas.add("周二");
+        tu.setData(yList, xRawDatas, 10, 2);
+    }
+
+    public void drawArc(ArrayList<Double> arrayList){
+
+        ArrayList<String> xRawDatas = new ArrayList<String>();
+        if (arrayList.size() == 7){
+            setContentView(R.layout.activity_remote_control_command);
+            tu = (LineGraphicView) findViewById(R.id.line_graphic);
+
+            xRawDatas.add("周一");
+            xRawDatas.add("周二");
+            xRawDatas.add("周三");
+            xRawDatas.add("周四");
+            xRawDatas.add("周五");
+            xRawDatas.add("周六");
+            xRawDatas.add("周日");
+            tu.setData(arrayList, xRawDatas, 10, 2);
+        }else {
+            Log.d("TIEJIANG", "arrayList length= " + arrayList.size());
+            Toast.makeText(this, "data error !", Toast.LENGTH_SHORT).show();
+        }
+//        yList = new ArrayList<Double>();
+//        yList.add((double) 2.103);
+//        yList.add(4.05);
+//        yList.add(6.60);
+//        yList.add(3.08);
+//        yList.add(4.32);
+//        yList.add(2.0);
+//        yList.add(7.0);
+    }
 
     @Override
     public void onMessageReport(ECError error, ECMessage message) {
@@ -72,9 +125,21 @@ public class RemoteControlCommandActivity extends Activity implements IMChatting
             message = ((ECTextMessageBody) msgs.get(i).getBody()).getMessage();
             Log.d("TIEJIANG", "[RemoteControlCommandActivity]" + "i = " + i + ", message = " + message);// add by tiejiang
         }
-
+        // clear first before load new data
+        if (!tempData.isEmpty()){
+            tempData.clear();
+        }
+        String[] msgArray = message.split(",");
+        Log.d("TIEJIANG", "[RemoteControlCommandActivity]" + "msgArray.length = " + msgArray.length);// add by tiejiang
+        if (msgArray.length == 7){
+            for (int i = 0; i < msgArray.length; i ++){
+                tempData.add(Double.valueOf(msgArray[i]));
+                Log.d("TIEJIANG", "[RemoteControlCommandActivity]" + "tempData[] = " + tempData.get(i));// add by tiejiang
+            }
+            drawArc(tempData);
+        }
         Log.d("TIEJIANG", "[RemoteControlCommandActivity]" + ",sessionId = " + sessionId);// add by tiejiang
-        mReceiveEditText.setText(message);
+//        mReceiveEditText.setText(message);
     }
 
     /**
