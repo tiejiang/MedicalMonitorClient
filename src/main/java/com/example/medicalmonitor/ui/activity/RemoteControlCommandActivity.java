@@ -54,7 +54,6 @@ public class RemoteControlCommandActivity extends Activity implements IMChatting
         tempData = new ArrayList<Double>();
         testDraw();
 //        addDataToBase(" ", " ");
-        testDisplay();
         loadData(" ", " ");  //预先加载数据到缓存集合框架
         // 显示体温数据
         dis_week_tiwen.setOnClickListener(new View.OnClickListener() {
@@ -167,26 +166,25 @@ public class RemoteControlCommandActivity extends Activity implements IMChatting
     public void onPushMessage(String sessionId, List<ECMessage> msgs) {
         int msgsSize = msgs.size();
         String  message = " ";
-        //  解析后插入数据库
-        // addDataToBase();
-
         for (int i = 0; i < msgsSize; i++){
             message = ((ECTextMessageBody) msgs.get(i).getBody()).getMessage();
             Log.d("TIEJIANG", "[RemoteControlCommandActivity]" + "i = " + i + ", message = " + message);// add by tiejiang
         }
-        String[] msgArray = message.split(",");
-        Log.d("TIEJIANG", "[RemoteControlCommandActivity]" + "msgArray.length = " + msgArray.length);// add by tiejiang
+        Display(message);
+//        String[] msgArray = message.split(",");
         Log.d("TIEJIANG", "[RemoteControlCommandActivity]" + ",sessionId = " + sessionId);// add by tiejiang
     }
 
     // test display data
-    public void testDisplay(){
+    public void Display(String str){
         // test code begin
-        String str = "W,data-wendu,X,data-pulse,E";
         // test code end
         String[] tmpArray = str.split(",");
         temperature.setText(tmpArray[1]);
         pulse.setText(tmpArray[3]);
+
+        //  解析后插入数据库
+         addDataToBase(tmpArray[1], tmpArray[3]);
     }
 
     //load data from database

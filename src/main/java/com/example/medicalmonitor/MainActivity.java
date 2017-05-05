@@ -67,16 +67,16 @@ public class MainActivity extends AppCompatActivity implements IMChattingHelper.
 
     @Override
     public void onPushMessage(String sessionId, List<ECMessage> msgs) {
-        int msgsSize = msgs.size();
-        String message = " ";
-        for (int i = 0; i < msgsSize; i++){
-            message = ((ECTextMessageBody) msgs.get(i).getBody()).getMessage();
-            Log.d("TIEJIANG", "[MainActivity-onPushMessage]" + "i :" + i + ", message = " + message);// add by tiejiang
-        }
-
-        Log.d("TIEJIANG", "[MainActivity-onPushMessage]" + ",sessionId :" + sessionId);// add by tiejiang
+//        int msgsSize = msgs.size();
+//        String message = " ";
+//        for (int i = 0; i < msgsSize; i++){
+//            message = ((ECTextMessageBody) msgs.get(i).getBody()).getMessage();
+//            Log.d("TIEJIANG", "[MainActivity-onPushMessage]" + "i :" + i + ", message = " + message);// add by tiejiang
+//        }
+//
+//        Log.d("TIEJIANG", "[MainActivity-onPushMessage]" + ",sessionId :" + sessionId);// add by tiejiang
 //mReceiveEditText.setText(message);
-        handleSendTextMessage(message + "callback");
+//        handleSendTextMessage(message + "callback");
     }
     /**
      * 处理文本发送方法事件通知
@@ -98,18 +98,6 @@ public class MainActivity extends AppCompatActivity implements IMChattingHelper.
         ECTextMessageBody msgBody=null;
         Boolean isBQMMMessage=false;
         String emojiNames = null;
-//if(text.toString().contains(CCPChattingFooter2.TXT_MSGTYPE)&& text.toString().contains(CCPChattingFooter2.MSG_DATA)){
-//try {
-//JSONObject jsonObject = new JSONObject(text.toString());
-//String emojiType=jsonObject.getString(CCPChattingFooter2.TXT_MSGTYPE);
-//if(emojiType.equals(CCPChattingFooter2.EMOJITYPE) || emojiType.equals(CCPChattingFooter2.FACETYPE)){//说明是含有BQMM的表情
-//isBQMMMessage=true;
-//emojiNames=jsonObject.getString(CCPChattingFooter2.EMOJI_TEXT);
-//}
-//} catch (JSONException e) {
-//e.printStackTrace();
-//}
-//}
         if (isBQMMMessage) {
             msgBody = new ECTextMessageBody(emojiNames);
             msg.setBody(msgBody);
