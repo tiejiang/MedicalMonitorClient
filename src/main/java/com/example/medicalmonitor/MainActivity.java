@@ -9,6 +9,7 @@ import android.widget.Button;
 
 import com.example.medicalmonitor.common.CCPAppManager;
 import com.example.medicalmonitor.core.ClientUser;
+import com.example.medicalmonitor.database.DatabaseCreate;
 import com.example.medicalmonitor.ui.activity.RemoteControlCommandActivity;
 import com.example.medicalmonitor.ui.helper.IMChattingHelper;
 import com.example.medicalmonitor.ui.helper.SDKCoreHelper;
@@ -44,6 +45,9 @@ public class MainActivity extends AppCompatActivity implements IMChattingHelper.
         SDKCoreHelper.init(MainActivity.this, ECInitParams.LoginMode.FORCE_LOGIN);
         IMChattingHelper.setOnMessageReportCallback(MainActivity.this);
 
+        //check and copy database to the dir
+        new DatabaseCreate(this).createDb();
+
         mLogin = (Button)findViewById(R.id.login);
         mLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,7 +55,6 @@ public class MainActivity extends AppCompatActivity implements IMChattingHelper.
                 Intent mIntent = new Intent();
                 mIntent.setClass(MainActivity.this, RemoteControlCommandActivity.class);
                 startActivity(mIntent);
-
             }
         });
     }

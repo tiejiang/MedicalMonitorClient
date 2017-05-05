@@ -113,6 +113,7 @@
     //允许应用读写用户的外部存储器
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
     //允许读取电话的状态
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     //允许一个程序获取信息有关当前或最近运行的任务，一个缩略的任务状态，是否活动等等

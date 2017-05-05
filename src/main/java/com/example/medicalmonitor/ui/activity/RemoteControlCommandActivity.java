@@ -1,12 +1,15 @@
 package com.example.medicalmonitor.ui.activity;
 
 import android.app.Activity;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
 import android.widget.Toast;
 
 import com.example.medicalmonitor.R;
+import com.example.medicalmonitor.database.DatabaseCreate;
 import com.example.medicalmonitor.ui.drawer.LineGraphicView;
 import com.example.medicalmonitor.ui.helper.IMChattingHelper;
 import com.yuntongxun.ecsdk.ECError;
@@ -15,6 +18,8 @@ import com.yuntongxun.ecsdk.im.ECTextMessageBody;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
+
 /**
  * Created by Administrator on 2016/12/14.
  */
@@ -27,6 +32,8 @@ public class RemoteControlCommandActivity extends Activity implements IMChatting
     private LineGraphicView tu;
     private ArrayList<Double> yList;
     private ArrayList<Double> tempData;
+    private SQLiteDatabase database;
+    private Vector allStudents; // load all students in the class
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +59,7 @@ public class RemoteControlCommandActivity extends Activity implements IMChatting
 //            }
 //        });
         testDraw();
+        loadStudent(" ", " ");  //预先加载数据到缓存集合框架
     }
 
     @Override
@@ -144,6 +152,47 @@ public class RemoteControlCommandActivity extends Activity implements IMChatting
         }
         Log.d("TIEJIANG", "[RemoteControlCommandActivity]" + ",sessionId = " + sessionId);// add by tiejiang
 //        mReceiveEditText.setText(message);
+    }
+
+    //load data from database
+    private void loadStudent(String stu_college, final String stu_class){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                allStudents = new Vector();
+                Cursor mCursor;
+//                if (stu_class.equals("10")){
+                    database = SQLiteDatabase.openOrCreateDatabase(DatabaseCreate.DATABASE_PATH + DatabaseCreate.dbName, null);
+                    String sql = "SELECT * FROM data ";
+                    mCursor = database.rawQuery(sql, null);
+                    if (mCursor.moveToFirst()){
+                        do {
+                            allStudents.add(mCursor.getString(mCursor.getColumnIndex("temperature")));
+                        }while (mCursor.moveToNext());
+                    }
+                    // test code begin
+					for (int i = 0; i < allStudents.size(); i ++){
+						Log.d("TIEJIANG", "data temperature= " + allStudents.get(i));
+					}
+                    // test code end
+//                }else if (stu_class.equals("11")){
+//                    database = SQLiteDatabase.openOrCreateDatabase(DatabaseCreate.DATABASE_PATH + DatabaseCreate.dbName, null);
+//                    String sql = "SELECT * FROM class_11 ";
+//                    mCursor = database.rawQuery(sql, null);
+//                    if (mCursor.moveToFirst()){
+//                        do {
+//                            allStudents.add(mCursor.getString(mCursor.getColumnIndex("student_name")));
+//                        }while (mCursor.moveToNext());
+//                    }
+//                    // test code begin
+////					for (int i = 0; i < allStudents.size(); i ++){
+////						Log.d("TIEJIANG", "class_11 student_name= " + allStudents.get(i));
+////					}
+//                    // test code end
+//                }
+
+            }
+        }).start();
     }
 
     /**
