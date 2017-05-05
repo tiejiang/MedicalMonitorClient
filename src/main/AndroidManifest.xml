@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.safeboxmonitor">
+    package="com.example.medicalmonitor">
 
     <application
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:name="com.example.safeboxmonitor.application.Application">
+        android:name="com.example.medicalmonitor.application.Application">
 
         <activity
-            android:name="com.example.safeboxmonitor.MainActivity"
+            android:name="com.example.medicalmonitor.MainActivity"
             android:theme="@style/Theme.AppCompat">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -18,14 +18,14 @@
         </activity>
 
         <activity
-            android:name="com.example.safeboxmonitor.ui.activity.MenuActivity">
+            android:name="com.example.medicalmonitor.ui.activity.MenuActivity">
         </activity>
 
         <activity
-            android:name="com.example.safeboxmonitor.ui.activity.RemoteControlCommandActivity">
+            android:name="com.example.medicalmonitor.ui.activity.RemoteControlCommandActivity">
         </activity>
         <activity
-            android:name="com.example.safeboxmonitor.ui.activity.VoIPCallActivity"
+            android:name="com.example.medicalmonitor.ui.activity.VoIPCallActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
@@ -36,7 +36,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.safeboxmonitor.ui.activity.VideoActivity"
+            android:name="com.example.medicalmonitor.ui.activity.VideoActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
@@ -81,7 +81,7 @@
 
         // 声明自定义通知的广播接收器（需要替换包名，详见注意事项）
         <receiver
-            android:name="com.example.safeboxmonitor.service.YuntxNotifyReceiver"
+            android:name="com.example.medicalmonitor.service.YuntxNotifyReceiver"
             android:exported="false">
             <intent-filter>
                 // 接收push消息

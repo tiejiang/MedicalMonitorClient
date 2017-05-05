@@ -5,7 +5,7 @@ android {
     buildToolsVersion "25.0.0"
 
     defaultConfig {
-        applicationId "com.example.safeboxmonitor"
+        applicationId "com.example.medicalmonitor"
         minSdkVersion 15
         targetSdkVersion 24
         versionCode 1
