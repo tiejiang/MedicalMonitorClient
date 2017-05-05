@@ -117,6 +117,10 @@ public class RemoteControlCommandActivity extends Activity implements IMChatting
 
     }
 
+    /**
+     * 接收数据并解析
+     * 接收数据看格式： W,data,X,data,E
+     * */
     @Override
     public void onPushMessage(String sessionId, List<ECMessage> msgs) {
         int msgsSize = msgs.size();
