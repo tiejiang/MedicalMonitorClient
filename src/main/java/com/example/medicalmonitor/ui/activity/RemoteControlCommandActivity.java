@@ -1,11 +1,14 @@
 package com.example.medicalmonitor.ui.activity;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Window;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.medicalmonitor.R;
@@ -26,40 +29,71 @@ import java.util.Vector;
 
 public class RemoteControlCommandActivity extends Activity implements IMChattingHelper.OnMessageReportCallback{
 
-//    private Button mSendButton;
-//    private EditText mReceiveEditText, mSendEditText;
+    private TextView temperature, pulse, dis_week_tiwen, dis_week_pulse;
     private final static String sendNO = "20170418";
     private LineGraphicView tu;
     private ArrayList<Double> yList;
     private ArrayList<Double> tempData;
     private SQLiteDatabase database;
-    private Vector allStudents; // load all students in the class
+    private Vector allTemperature; // load all temperature data
+    private Vector allPulse; // load all Pulse data
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        requestWindowFeature(Window.FEATURE_NO_TITLE);
 //        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.activity_remote_control_command);
 
         tu = (LineGraphicView) findViewById(R.id.line_graphic);
-//        mSendButton = (Button)findViewById(R.id.btn_command_send);
-//        mReceiveEditText = (EditText)findViewById(R.id.received_command);
-//        mSendEditText = (EditText)findViewById(R.id.send_info);
+        temperature = (TextView) findViewById(R.id.tempe);
+        pulse = (TextView)findViewById(R.id.pulse);
+        dis_week_tiwen = (Button)findViewById(R.id.dis_week_tiwen);
+        dis_week_pulse = (Button)findViewById(R.id.dis_week_pulse);
 
         tempData = new ArrayList<Double>();
-//        mSendButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (!TextUtils.isEmpty(mSendEditText.getText())){
-//                    String text = mSendEditText.getText().toString();
-//                    handleSendTextMessage(text);
-//                }else {
-//                    Toast.makeText(RemoteControlCommandActivity.this, "发送文本为空", Toast.LENGTH_SHORT).show();                }
-//            }
-//        });
         testDraw();
-        loadStudent(" ", " ");  //预先加载数据到缓存集合框架
+//        addDataToBase(" ", " ");
+        testDisplay();
+        loadData(" ", " ");  //预先加载数据到缓存集合框架
+        // 显示体温数据
+        dis_week_tiwen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("TIEJIANG", "[Remot");
+                refresh();
+                // clear first before load new data
+                if (!tempData.isEmpty()){
+                    tempData.clear();
+                }
+                for (int i = 0; i < 7; i ++){
+                    tempData.add(Double.valueOf(allTemperature.get(i).toString()));
+                    Log.d("TIEJIANG", "[RemoteControlCommandActivity]" + "tempData[] = " + tempData.get(i));// add by tiejiang
+                }
+                drawArc(tempData, 40, 5);
+            }
+        });
+        // 显示脉搏数据
+        dis_week_pulse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("TIEJIANG", "[Remot");
+                refresh();
+                // clear first before load new data
+                if (!tempData.isEmpty()){
+                    tempData.clear();
+                }
+                for (int i = 0; i < 7; i ++){
+                    tempData.add(Double.valueOf(allPulse.get(i).toString()));
+                    Log.d("TIEJIANG", "[RemoteControlCommandActivity]" + "tempData[] = " + tempData.get(i));// add by tiejiang
+                }
+                drawArc(tempData, 100, 8);
+            }
+        });
+    }
+    // 刷新当前activity
+    public void refresh() {
+        onCreate(null);
     }
 
     @Override
@@ -91,12 +125,12 @@ public class RemoteControlCommandActivity extends Activity implements IMChatting
         tu.setData(yList, xRawDatas, 10, 2);
     }
 
-    public void drawArc(ArrayList<Double> arrayList){
+    public void drawArc(ArrayList<Double> arrayList, int dis_max, int dis_average){
 
         ArrayList<String> xRawDatas = new ArrayList<String>();
         if (arrayList.size() == 7){
-            setContentView(R.layout.activity_remote_control_command);
-            tu = (LineGraphicView) findViewById(R.id.line_graphic);
+//            setContentView(R.layout.activity_remote_control_command);
+//            tu = (LineGraphicView) findViewById(R.id.line_graphic);
 
             xRawDatas.add("周一");
             xRawDatas.add("周二");
@@ -105,7 +139,7 @@ public class RemoteControlCommandActivity extends Activity implements IMChatting
             xRawDatas.add("周五");
             xRawDatas.add("周六");
             xRawDatas.add("周日");
-            tu.setData(arrayList, xRawDatas, 10, 2);
+            tu.setData(arrayList, xRawDatas, dis_max, dis_average);
         }else {
             Log.d("TIEJIANG", "arrayList length= " + arrayList.size());
             Toast.makeText(this, "data error !", Toast.LENGTH_SHORT).show();
@@ -127,39 +161,41 @@ public class RemoteControlCommandActivity extends Activity implements IMChatting
 
     /**
      * 接收数据并解析
-     * 接收数据看格式： W,data,X,data,E
+     * 接收数据看格式： W,data-wendu,X,data-pulse,E
      * */
     @Override
     public void onPushMessage(String sessionId, List<ECMessage> msgs) {
         int msgsSize = msgs.size();
         String  message = " ";
+        //  解析后插入数据库
+        // addDataToBase();
+
         for (int i = 0; i < msgsSize; i++){
             message = ((ECTextMessageBody) msgs.get(i).getBody()).getMessage();
             Log.d("TIEJIANG", "[RemoteControlCommandActivity]" + "i = " + i + ", message = " + message);// add by tiejiang
         }
-        // clear first before load new data
-        if (!tempData.isEmpty()){
-            tempData.clear();
-        }
         String[] msgArray = message.split(",");
         Log.d("TIEJIANG", "[RemoteControlCommandActivity]" + "msgArray.length = " + msgArray.length);// add by tiejiang
-        if (msgArray.length == 7){
-            for (int i = 0; i < msgArray.length; i ++){
-                tempData.add(Double.valueOf(msgArray[i]));
-                Log.d("TIEJIANG", "[RemoteControlCommandActivity]" + "tempData[] = " + tempData.get(i));// add by tiejiang
-            }
-            drawArc(tempData);
-        }
         Log.d("TIEJIANG", "[RemoteControlCommandActivity]" + ",sessionId = " + sessionId);// add by tiejiang
-//        mReceiveEditText.setText(message);
+    }
+
+    // test display data
+    public void testDisplay(){
+        // test code begin
+        String str = "W,data-wendu,X,data-pulse,E";
+        // test code end
+        String[] tmpArray = str.split(",");
+        temperature.setText(tmpArray[1]);
+        pulse.setText(tmpArray[3]);
     }
 
     //load data from database
-    private void loadStudent(String stu_college, final String stu_class){
+    private void loadData(String stu_college, final String stu_class){
         new Thread(new Runnable() {
             @Override
             public void run() {
-                allStudents = new Vector();
+                allTemperature = new Vector();
+                allPulse = new Vector();
                 Cursor mCursor;
 //                if (stu_class.equals("10")){
                     database = SQLiteDatabase.openOrCreateDatabase(DatabaseCreate.DATABASE_PATH + DatabaseCreate.dbName, null);
@@ -167,12 +203,14 @@ public class RemoteControlCommandActivity extends Activity implements IMChatting
                     mCursor = database.rawQuery(sql, null);
                     if (mCursor.moveToFirst()){
                         do {
-                            allStudents.add(mCursor.getString(mCursor.getColumnIndex("temperature")));
+                            allTemperature.add(mCursor.getString(mCursor.getColumnIndex("temperature")));
+                            allPulse.add(mCursor.getString(mCursor.getColumnIndex("pulse")));
                         }while (mCursor.moveToNext());
                     }
                     // test code begin
-					for (int i = 0; i < allStudents.size(); i ++){
-						Log.d("TIEJIANG", "data temperature= " + allStudents.get(i));
+					for (int i = 0; i < allTemperature.size(); i ++){
+						Log.d("TIEJIANG", "data temperature= " + allTemperature.get(i));
+                        Log.d("TIEJIANG", "data allPulse= " + allPulse.get(i));
 					}
                     // test code end
 //                }else if (stu_class.equals("11")){
@@ -193,6 +231,14 @@ public class RemoteControlCommandActivity extends Activity implements IMChatting
 
             }
         }).start();
+    }
+    //将数据加入到数据库的表当中
+    public void addDataToBase(String ti_wen, String pulse){
+        database = SQLiteDatabase.openOrCreateDatabase(DatabaseCreate.DATABASE_PATH + DatabaseCreate.dbName, null);
+        ContentValues mContentValues = new ContentValues();
+        mContentValues.put("temperature", ti_wen);
+        mContentValues.put("pulse", pulse);
+        long rowid = database.insert("data", null, mContentValues);
     }
 
     /**

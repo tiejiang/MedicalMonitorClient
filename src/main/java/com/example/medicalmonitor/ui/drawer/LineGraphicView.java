@@ -18,13 +18,6 @@ import android.view.WindowManager;
 
 import java.util.ArrayList;
 
-/**********************************************************
- * @文件名称：LineGraphicView.java
- * @文件作者：rzq
- * @创建时间：2015年5月27日 下午3:05:19
- * @文件描述：自定义简单曲线图
- * @修改历史：2015年5月27日创建初始版本
- **********************************************************/
 public class LineGraphicView extends View
 {
     /**

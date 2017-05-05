@@ -14,11 +14,32 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/dis_week_tiwen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="一周体温数据"/>
+
+            <Button
+                android:id="@+id/dis_week_pulse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="一周脉搏数据" />
+        </LinearLayout>
+
+
         <com.example.medicalmonitor.ui.drawer.LineGraphicView
             android:id="@+id/line_graphic"
             android:layout_width="wrap_content"
             android:layout_height="400dp"
             />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="实时健康数据"/>
 
         <View
             android:layout_width="10dp"
@@ -30,16 +51,37 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/week_data"
+                android:id="@+id/temperature"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="一周情况:"/>
+                android:text="body temperature:"/>
             <View
                 android:layout_width="10dp"
                 android:layout_height="wrap_content"/>
 
             <TextView
-                android:id="@+id/total_week"
+                android:id="@+id/tempe"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="data"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/line3"
+            android:layout_width="wrap_content"
+            android:layout_height="34dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/pu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="pulse: "/>
+            <View
+                android:layout_width="10dp"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/pulse"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="data"/>

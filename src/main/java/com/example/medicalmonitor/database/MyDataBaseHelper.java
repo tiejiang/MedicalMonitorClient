@@ -8,7 +8,7 @@ import android.widget.Toast;
 /**
  * Created by tiejiang on 17-5-5.
  */
-
+// 已经通过assets文件夹加载数据库，此类废弃
 public class MyDataBaseHelper extends SQLiteOpenHelper {
 
     private Context mContext;
